@@ -9,7 +9,7 @@ import com.stockmarket.stockmarket.model.WalletStockId;
 import com.stockmarket.stockmarket.repository.WalletStockRepository;
 import com.stockmarket.stockmarket.service.strategy.TradeStrategy;
 import jakarta.annotation.PostConstruct;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -38,7 +38,6 @@ public class WalletService {
     public void trade(String walletId, String stockName, String type) {
         TradeStrategy strategy = Optional.ofNullable(strategyMap.get(type))
                 .orElseThrow(() -> new IllegalArgumentException("Unknown trade type: " + type));
-
         strategy.execute(walletId, stockName);
         auditService.log(type, walletId, stockName);
     }

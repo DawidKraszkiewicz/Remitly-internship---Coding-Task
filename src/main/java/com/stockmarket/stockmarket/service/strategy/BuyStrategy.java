@@ -4,7 +4,7 @@ import com.stockmarket.stockmarket.model.WalletStock;
 import com.stockmarket.stockmarket.model.WalletStockId;
 import com.stockmarket.stockmarket.repository.WalletStockRepository;
 import com.stockmarket.stockmarket.service.BankService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +26,6 @@ public class BuyStrategy implements TradeStrategy {
         WalletStock ws = walletStockRepository.findById(wsId)
                 .orElse(new WalletStock(wsId, 0));
         ws.setQuantity(ws.getQuantity() + 1);
-        walletStockRepository.save(ws);
+        WalletStock saved = walletStockRepository.save(ws);
     }
 }

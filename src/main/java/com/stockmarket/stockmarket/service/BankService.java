@@ -5,7 +5,7 @@ import com.stockmarket.stockmarket.exception.InsufficientStockException;
 import com.stockmarket.stockmarket.exception.StockNotFoundException;
 import com.stockmarket.stockmarket.model.BankStock;
 import com.stockmarket.stockmarket.repository.BankStockRepository;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -19,6 +19,7 @@ public class BankService {
 
     @Transactional
     public void setStocks(List<StockDto> stocks) {
+        bankStockRepository.deleteAll();
         List<BankStock> entities = stocks.stream()
                 .map(s -> new BankStock(s.name(), s.quantity()))
                 .toList();

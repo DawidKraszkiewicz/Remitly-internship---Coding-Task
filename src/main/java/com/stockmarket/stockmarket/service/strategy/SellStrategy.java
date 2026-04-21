@@ -5,7 +5,7 @@ import com.stockmarket.stockmarket.model.WalletStock;
 import com.stockmarket.stockmarket.model.WalletStockId;
 import com.stockmarket.stockmarket.repository.WalletStockRepository;
 import com.stockmarket.stockmarket.service.BankService;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 

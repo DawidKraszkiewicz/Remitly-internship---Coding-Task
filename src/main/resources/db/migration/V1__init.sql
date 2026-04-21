@@ -4,8 +4,8 @@ CREATE TABLE bank_stocks (
 );
 
 CREATE TABLE wallet_stocks (
-                               wallet_id  VARCHAR(100) NOT NULL,
                                stock_name VARCHAR(100) NOT NULL,
+                               wallet_id  VARCHAR(100) NOT NULL,
                                quantity   INT NOT NULL CHECK (quantity >= 0),
                                PRIMARY KEY (wallet_id, stock_name)
 );
