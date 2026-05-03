@@ -11,7 +11,6 @@ import com.stockmarket.stockmarket.service.strategy.SellStrategy;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -37,7 +36,6 @@ class WalletServiceTest {
     @Mock
     private SellStrategy sellStrategy;
 
-    @InjectMocks
     private WalletService walletService;
 
     @BeforeEach
@@ -49,7 +47,6 @@ class WalletServiceTest {
                 walletStockRepository,
                 auditService
         );
-        walletService.init();
     }
 
     @Test

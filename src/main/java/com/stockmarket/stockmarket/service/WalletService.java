@@ -8,9 +8,7 @@ import com.stockmarket.stockmarket.model.WalletStock;
 import com.stockmarket.stockmarket.model.WalletStockId;
 import com.stockmarket.stockmarket.repository.WalletStockRepository;
 import com.stockmarket.stockmarket.service.strategy.TradeStrategy;
-import jakarta.annotation.PostConstruct;
 import org.springframework.transaction.annotation.Transactional;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,19 +17,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
 public class WalletService {
 
-    private final List<TradeStrategy> strategies;
+    private final Map<String, TradeStrategy> strategyMap;
     private final WalletStockRepository walletStockRepository;
     private final AuditService auditService;
 
-    private Map<String, TradeStrategy> strategyMap;
-
-    @PostConstruct
-    public void init() {
-        strategyMap = strategies.stream()
+    public WalletService(List<TradeStrategy> strategies,
+                         WalletStockRepository walletStockRepository,
+                         AuditService auditService) {
+        this.strategyMap = strategies.stream()
                 .collect(Collectors.toMap(TradeStrategy::getType, s -> s));
+        this.walletStockRepository = walletStockRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
