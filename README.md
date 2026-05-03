@@ -21,8 +21,7 @@ A highly available REST API for managing wallets and stock trading, built with S
 ### Linux / macOS
 
 ```bash
-chmod +x start.sh
-./start.sh 8080
+/bin/bash start.sh 8080
 ```
 
 ### Windows
@@ -95,5 +94,244 @@ You can see all registered instances and their health status.
 | Method | Path | Description |
 |--------|------|-------------|
 | `GET` | `/wallets/{walletId}` | Get wallet details |
-| `POST` | `/wallets/{walletId}/stocks/{stockName}` | Buy a stock |
-| `DELETE` | `/wallets/{walletId}/stocks/{stockName}` | Sell a stock |
+| `GET` | `/wallets/{walletId}/stocks/{stockName}` | Get quantity of a stock in a wallet |
+| `POST` | `/wallets/{walletId}/stocks/{stockName}` | Buy or sell a stock |
+
+### Logs
+
+| Method | Path | Description |
+|--------|------|-------------|
+| `GET` | `/log` | List buy/sell operations |
+
+## Example Payloads and Responses
+
+The examples below assume the API is running on `http://localhost:8080`.
+
+### Set Available Stocks
+
+Request:
+
+```bash
+curl -X POST http://localhost:8080/stocks \
+  -H "Content-Type: application/json" \
+  -d '{
+    "stocks": [
+      { "name": "AAPL", "quantity": 100 },
+      { "name": "GOOG", "quantity": 50 }
+    ]
+  }'
+```
+
+Payload:
+
+```json
+{
+  "stocks": [
+    {
+      "name": "AAPL",
+      "quantity": 100
+    },
+    {
+      "name": "GOOG",
+      "quantity": 50
+    }
+  ]
+}
+```
+
+Successful response:
+
+```http
+HTTP/1.1 200 OK
+```
+
+The response body is empty.
+
+### List Available Stocks
+
+Request:
+
+```bash
+curl http://localhost:8080/stocks
+```
+
+Successful response:
+
+```json
+{
+  "stocks": [
+    {
+      "name": "AAPL",
+      "quantity": 100
+    },
+    {
+      "name": "GOOG",
+      "quantity": 50
+    }
+  ]
+}
+```
+
+When no stocks are available:
+
+```json
+{
+  "stocks": []
+}
+```
+
+### Buy a Stock
+
+Request:
+
+```bash
+curl -X POST http://localhost:8080/wallets/wallet1/stocks/AAPL \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "buy" }'
+```
+
+Payload:
+
+```json
+{
+  "type": "buy"
+}
+```
+
+Successful response:
+
+```http
+HTTP/1.1 200 OK
+```
+
+The response body is empty.
+
+### Sell a Stock
+
+Request:
+
+```bash
+curl -X POST http://localhost:8080/wallets/wallet1/stocks/AAPL \
+  -H "Content-Type: application/json" \
+  -d '{ "type": "sell" }'
+```
+
+Payload:
+
+```json
+{
+  "type": "sell"
+}
+```
+
+Successful response:
+
+```http
+HTTP/1.1 200 OK
+```
+
+The response body is empty.
+
+### Get Wallet Details
+
+Request:
+
+```bash
+curl http://localhost:8080/wallets/wallet1
+```
+
+Successful response:
+
+```json
+{
+  "id": "wallet1",
+  "stocks": [
+    {
+      "name": "AAPL",
+      "quantity": 10
+    },
+    {
+      "name": "GOOG",
+      "quantity": 5
+    }
+  ]
+}
+```
+
+When the wallet has no stocks:
+
+```json
+{
+  "id": "wallet1",
+  "stocks": []
+}
+```
+
+### Get Stock Quantity in Wallet
+
+Request:
+
+```bash
+curl http://localhost:8080/wallets/wallet1/stocks/AAPL
+```
+
+Successful response:
+
+```text
+7
+```
+
+### Get Operation Log
+
+Request:
+
+```bash
+curl http://localhost:8080/log
+```
+
+Successful response:
+
+```json
+{
+  "log": [
+    {
+      "type": "buy",
+      "wallet_id": "wallet1",
+      "stock_name": "AAPL"
+    },
+    {
+      "type": "sell",
+      "wallet_id": "wallet2",
+      "stock_name": "GOOG"
+    }
+  ]
+}
+```
+
+When there are no log entries:
+
+```json
+{
+  "log": []
+}
+```
+
+### Error Responses
+
+Unknown stock:
+
+```http
+HTTP/1.1 404 Not Found
+Content-Type: text/plain
+
+Stock not found: AAPL
+```
+
+Insufficient stock:
+
+```http
+HTTP/1.1 400 Bad Request
+Content-Type: text/plain
+
+No stock
+```
